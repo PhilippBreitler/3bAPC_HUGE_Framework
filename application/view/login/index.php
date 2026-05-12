@@ -39,11 +39,12 @@
                 </div>
             </div>
 
+            <!-- auskommentiert, da nur mehr Admin neue User erstellen können soll -->
             <!-- register box on right side -->
-            <div class="register-box">
+            <!-- <div class="register-box">
                 <h2>No account yet ?</h2>
                 <a href="<?php echo Config::get('URL'); ?>register/index">Register</a>
-            </div>
+            </div> -->
 
         </div>
     </div>

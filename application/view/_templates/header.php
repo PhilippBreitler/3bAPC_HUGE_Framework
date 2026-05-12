@@ -36,15 +36,22 @@
                 <li <?php if (View::checkForActiveControllerAndAction($filename, "login/index")) { echo ' class="active" '; } ?> >
                     <a href="<?php echo Config::get('URL'); ?>login/index">Login</a>
                 </li>
-                <li <?php if (View::checkForActiveControllerAndAction($filename, "register/index")) { echo ' class="active" '; } ?> >
+                <!-- SPÄTER LÖSCHEN -->
+                <!-- <li <?php if (View::checkForActiveControllerAndAction($filename, "register/index")) { echo ' class="active" '; } ?> >
                     <a href="<?php echo Config::get('URL'); ?>register/index">Register</a>
-                </li>
+                </li> -->
             <?php } ?>
         </ul>
 
         <!-- my account -->
         <ul class="navigation right">
         <?php if (Session::userIsLoggedIn()) : ?>
+            <!-- registrier feld nur angezeigt wenn als admin eingeloggt (user_account_type 7) -->
+            <?php if (Session::get("user_account_type") == 7) : ?>
+                <li <?php if (View::checkForActiveControllerAndAction($filename, "register/index")) { echo ' class="active" '; } ?> >
+                    <a href="<?php echo Config::get('URL'); ?>register/index">Register</a>
+                </li>
+            <?php endif; ?>
             <li <?php if (View::checkForActiveController($filename, "user")) { echo ' class="active" '; } ?> >
                 <a href="<?php echo Config::get('URL'); ?>user/index">My Account</a>
                 <ul class="navigation-submenu">

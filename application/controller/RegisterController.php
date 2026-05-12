@@ -14,6 +14,8 @@ class RegisterController extends Controller
     public function __construct()
     {
         parent::__construct();
+
+        Auth::checkAdminAuthentication();   # Muss eingefügt werden, damit nur der Admin drauf zugreifen kann 
     }
 
     /**
@@ -22,11 +24,13 @@ class RegisterController extends Controller
      */
     public function index()
     {
-        if (LoginModel::isUserLoggedIn()) {
-            Redirect::home();
-        } else {
-            $this->View->render('register/index');
-        }
+        # wenn engeloggt, soll nicht auf klick wieder zu home (index) redirected werden
+        // if (LoginModel::isUserLoggedIn()) {
+        //     Redirect::home();
+        // } else {
+        //     $this->View->render('register/index');
+        // }
+        $this->View->render('register/index');
     }
 
     /**
@@ -57,18 +61,5 @@ class RegisterController extends Controller
         } else {
             Redirect::to('login/index');
         }
-    }
-
-    /**
-     * Generate a captcha, write the characters into $_SESSION['captcha'] and returns a real image which will be used
-     * like this: <img src="......./login/showCaptcha" />
-     * IMPORTANT: As this action is called via <img ...> AFTER the real application has finished executing (!), the
-     * SESSION["captcha"] has no content when the application is loaded. The SESSION["captcha"] gets filled at the
-     * moment the end-user requests the <img .. >
-     * Maybe refactor this sometime.
-     */
-    public function showCaptcha()
-    {
-        CaptchaModel::generateAndShowCaptcha();
     }
 }

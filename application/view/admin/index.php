@@ -13,7 +13,7 @@
             or suspend a user.
         </div>
         <div>
-            <table class="overview-table">
+            <table id="admintable" class="overview-table">
                 <thead>
                 <tr>
                     <td>Id</td>
@@ -64,3 +64,7 @@
         </div>
     </div>
 </div>
+
+<script>
+    new DataTable('#admintable', { scrollX: true });
+</script>

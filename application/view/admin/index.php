@@ -24,6 +24,7 @@
                     <td>Link to user's profile</td>
                     <td>suspension Time in days</td>
                     <td>Soft delete</td>
+                    <td>User Role</td>
                     <td>Submit</td>
                 </tr>
                 </thead>
@@ -44,6 +45,14 @@
                         <form action="<?= config::get("URL"); ?>admin/actionAccountSettings" method="post">
                             <td><input type="number" name="suspension" /></td>
                             <td><input type="checkbox" name="softDelete" <?php if ($user->user_deleted) { ?> checked <?php } ?> /></td>
+                            <td>
+                                <!-- Drop Down Menü -->
+                                <select name="user_role">
+                                    <option value="1" <?= ($user->user_account_type == 1 ? 'selected' : ''); ?>>Gast</option>
+                                    <option value="2" <?= ($user->user_account_type == 2 ? 'selected' : ''); ?>>normaler User</option>
+                                    <option value="7" <?= ($user->user_account_type == 7 ? 'selected' : ''); ?>>Admin</option>
+                                </select>
+                            </td>
                             <td>
                                 <input type="hidden" name="user_id" value="<?= $user->user_id; ?>" />
                                 <input type="submit" />

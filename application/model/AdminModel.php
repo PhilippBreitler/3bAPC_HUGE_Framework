@@ -12,7 +12,7 @@ class AdminModel
      * @param $softDelete
      * @param $userId
      */
-    public static function setAccountSuspensionAndDeletionStatus($suspensionInDays, $softDelete, $userId)
+    public static function setAccountSuspensionAndDeletionStatus($suspensionInDays, $softDelete, $userId, $userRole)
     {
 
         // Prevent to suspend or delete own account.
@@ -35,8 +35,15 @@ class AdminModel
             $delete = 0;
         }
 
+        $allowedRoles = [1, 2, 3, 4, 5, 6, 7];
+        if (in_array($userRole, $allowedRoles)) {
+            $role = $userRole;
+        } else {
+            $role = null;
+        }
+
         // write the above info to the database
-        self::writeDeleteAndSuspensionInfoToDatabase($userId, $suspensionTime, $delete);
+        self::writeDeleteAndSuspensionInfoToDatabase($userId, $suspensionTime, $delete, $role);
 
         // if suspension or deletion should happen, then also kick user out of the application instantly by resetting
         // the user's session :)
@@ -53,15 +60,16 @@ class AdminModel
      * @param $delete
      * @return bool
      */
-    private static function writeDeleteAndSuspensionInfoToDatabase($userId, $suspensionTime, $delete)
+    private static function writeDeleteAndSuspensionInfoToDatabase($userId, $suspensionTime, $delete, $role)
     {
         $database = DatabaseFactory::getFactory()->getConnection();
 
-        $query = $database->prepare("UPDATE users SET user_suspension_timestamp = :user_suspension_timestamp, user_deleted = :user_deleted  WHERE user_id = :user_id LIMIT 1");
+        $query = $database->prepare("UPDATE users SET user_suspension_timestamp = :user_suspension_timestamp, user_deleted = :user_deleted, user_account_type = :user_account_type WHERE user_id = :user_id LIMIT 1");
         $query->execute(array(
                 ':user_suspension_timestamp' => $suspensionTime,
                 ':user_deleted' => $delete,
-                ':user_id' => $userId
+                ':user_id' => $userId,
+                ':user_account_type' => $role,
         ));
 
         if ($query->rowCount() == 1) {

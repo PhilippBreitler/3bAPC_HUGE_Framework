@@ -100,4 +100,11 @@ class AdminModel
             return true;
         }
     }
+
+    public static function getAllRoles() {
+        $database = DatabaseFactory::getFactory()->getConnection();
+        $query = $database->prepare("SELECT role_id, role_name FROM user_roles ORDER BY role_id");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
 }

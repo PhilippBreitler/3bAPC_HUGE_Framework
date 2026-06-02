@@ -38,15 +38,11 @@
                             <a href="<?= Config::get('URL') . 'profile/showProfile/' . $user->user_id; ?>">Profile</a>
                         </td>
                         <td>
-                            <?php
-                                if ($user->user_account_type == 7) {
-                                    echo 'Admin';
-                                } elseif ($user->user_account_type == 2) {
-                                    echo 'normaler User';
-                                } elseif ($user->user_account_type == 1) {
-                                    echo 'Gast';
-                                }
-                            ?>
+                            <?php foreach ($this->roles as $role) { ?>
+                                <?php if ($user->user_account_type == $role->role_id) { ?>
+                                    <?= $role->role_name; ?>
+                                <?php } ?>
+                            <?php } ?>
                         </td>
                     </tr>
                 <?php } ?>

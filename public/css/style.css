@@ -266,3 +266,16 @@ body {
 .red-text {
     color: red;
 }
+
+.container form {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    max-width: 600px;
+    margin: 0.5em auto;
+}
+
+.container form input[type="text"] {
+    flex: 1;
+    max-width: 300px;
+}

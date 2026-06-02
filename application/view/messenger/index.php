@@ -21,9 +21,12 @@
                     <td>Activated ?</td>
                     <td>Link to user's profile</td>
                     <td>User Role</td>
+                    <td>Chat</td>
                 </tr>
                 </thead>
                 <?php foreach ($this->users as $user) { ?>
+                    <!-- Damit man man slebst nicht angezeigt wird -->
+                    <?php if ($user->user_id == Session::get('user_id')) continue; ?>
                     <tr class="<?= ($user->user_active == 0 ? 'inactive' : 'active'); ?>">
                         <td><?= $user->user_id; ?></td>
                         <td class="avatar">
@@ -47,6 +50,9 @@
                                     echo 'Gast';
                                 }
                             ?>
+                        </td>
+                        <td>
+                            <a href="<?= Config::get('URL') . 'messenger/openChat/' . $user->user_id; ?>">Chat öffnen</a>
                         </td>
                     </tr>
                 <?php } ?>

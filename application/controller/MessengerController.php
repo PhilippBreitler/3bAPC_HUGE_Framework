@@ -10,9 +10,43 @@
 
         public function index() {
 
-        $this->View->render('messenger/index', array(
-            'users' => UserModel::getPublicProfilesOfAllUsers()
-        ));
+            $this->View->render('messenger/index', array(
+                'users' => UserModel::getPublicProfilesOfAllUsers()
+            ));
+        }
+
+
+        public function openChat($user_id) {
+
+            $chat_id = MessengerModel::getOrCreateChat(Session::get('user_id'), $user_id);
+            Redirect::to('messenger/showChat/' . $chat_id);
+
+        }
+
+        public function showChat($chat_id)
+        {
+            // Sicherheit: prüfen ob der eingeloggte User in diesem Chat ist
+            if (!MessengerModel::userIsParticipant($chat_id, Session::get('user_id'))) {
+                Redirect::to('messenger/index');
+            }
+
+            $this->View->render('messenger/chat', array(
+                'messages' => MessengerModel::getMessagesByChatId($chat_id),
+                'chat_id'  => $chat_id
+            ));
+        }
+
+        public function sendMessage()
+        {
+            $chat_id = Request::post('chat_id');
+
+            // Sicherheit: prüfen ob der eingeloggte User in diesem Chat ist
+            if (!MessengerModel::userIsParticipant($chat_id, Session::get('user_id'))) {
+                Redirect::to('messenger/index');
+            }
+
+            MessengerModel::sendMessage($chat_id, Session::get('user_id'), Request::post('content'));
+            Redirect::to('messenger/showChat/' . $chat_id);
         }
     }
 

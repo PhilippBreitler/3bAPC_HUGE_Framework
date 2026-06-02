@@ -7,6 +7,8 @@
             $messages = $this->messages;
             $count = count($messages);
             $current_user_id = Session::get('user_id');
+            $chat_info = $this->chat_info;
+            $is_group  = $chat_info->is_group;
 
             for ($i = 0; $i < $count; $i++) {
                 $msg     = $messages[$i];
@@ -28,6 +30,10 @@
 
                 echo '<div class="bubble ' . $role . ' ' . $group . '">';
                 echo htmlspecialchars($msg->content);
+                if ($is_group && !$is_sender && !$prev_same) {
+                    echo '<span class="sender-name">' . htmlspecialchars($msg->user_name) . '</span>';
+                }
+                // echo htmlspecialchars($msg->content);
                 echo '</div>';
             }
             ?>

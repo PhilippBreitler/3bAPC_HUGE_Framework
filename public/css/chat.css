@@ -38,3 +38,12 @@ html { font-family: 'PT Sans', Georgia, serif; }
 	border-bottom-right-radius: 0.1em;
 	border-top-right-radius: 0.1em;
 }
+
+/* VOM COPILOT ERSTELLT */
+.bubble .sender-name {
+    display: block;
+    font-size: 0.70em;
+    font-weight: bold;
+    margin-top: 4px;
+    color: rgba(0, 0, 0, 0.4);
+}

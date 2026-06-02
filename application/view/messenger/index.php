@@ -6,10 +6,10 @@
         <?php $this->renderFeedbackMessages(); ?>
 
         <h3>What happens here ?</h3>
-        <div>
-            This controller/action/view shows a list of all users in the system. You could use the underlying code to
-            build things that use profile information of one or multiple/all users.
-        </div>
+        <p>
+            This is an area that's only visible for logged in users. Try to log out, an go to /dashboard/ again. You'll
+            be redirected to /index/ as you are not logged in. You can protect a whole section in your app within the
+            according controller by placing <i>Auth::handleLogin();</i> into the constructor.
         <div>
             <table id="profilestable" class="overview-table">
                 <thead>
@@ -17,11 +17,8 @@
                     <td>Id</td>
                     <td>Avatar</td>
                     <td>Username</td>
-                    <td>User's email</td>
-                    <td>Activated ?</td>
-                    <td>Link to user's profile</td>
-                    <td>User Role</td>
                     <td>Chat</td>
+                    <td>Ungelesen</td>  <!-- NEU -->
                 </tr>
                 </thead>
                 <?php foreach ($this->users as $user) { ?>
@@ -35,32 +32,54 @@
                             <?php } ?>
                         </td>
                         <td><?= $user->user_name; ?></td>
-                        <td><?= $user->user_email; ?></td>
-                        <td><?= ($user->user_active == 0 ? 'No' : 'Yes'); ?></td>
-                        <td>
-                            <a href="<?= Config::get('URL') . 'profile/showProfile/' . $user->user_id; ?>">Profile</a>
-                        </td>
-                        <td>
-                            <?php
-                                if ($user->user_account_type == 7) {
-                                    echo 'Admin';
-                                } elseif ($user->user_account_type == 2) {
-                                    echo 'normaler User';
-                                } elseif ($user->user_account_type == 1) {
-                                    echo 'Gast';
-                                }
-                            ?>
-                        </td>
                         <td>
                             <a href="<?= Config::get('URL') . 'messenger/openChat/' . $user->user_id; ?>">Chat öffnen</a>
+                        </td>
+                        <td>
+                            <?php 
+                                $chatId = $this->directChats[$user->user_id] ?? null;
+                                if ($chatId && !empty($this->unread[$chatId])): ?>
+                                    <span class="badge" style="background-color: red; color: white; padding: 2px 7px; border-radius: 10px; font-weight: bold;"><?= $this->unread[$chatId]; ?></span>
+                            <?php endif; ?>
+                            </td>
                         </td>
                     </tr>
                 <?php } ?>
             </table>
+        </div>
+        <a href="<?= Config::get('URL'); ?>messenger/createGroup">
+            <button class="group-chat-btn">Gruppe erstellen</button>
+        </a>
+        <h3>Meine Gruppen</h3>
+        <div>
+        <table id="groupstable" class="overview-table">
+            <thead>
+            <tr>
+                <td>Id</td>
+                <td>Name</td>
+                <td>Gruppe öffnen</td>
+                <td>Ungelesen</td>
+            </tr>
+            </thead>
+            <?php foreach ($this->chats as $chat): ?>
+                <?php if (!$chat->is_group) continue; ?>
+                <tr>
+                    <td><?= $chat->id; ?></td>
+                    <td><?= htmlspecialchars($chat->name); ?></td>
+                    <td><a href="<?= Config::get('URL') . 'messenger/showChat/' . $chat->id; ?>">Gruppe öffnen</a></td>
+                    <td>
+                        <?php if (!empty($this->unread[$chat->id])): ?>
+                            <span class="badge" style="background-color: red; color: white; padding: 2px 7px; border-radius: 10px; font-weight: bold;"><?= $this->unread[$chat->id]; ?></span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </table>
         </div>
     </div>
 </div>
 
 <script>
     new DataTable('#profilestable');
+    new DataTable('#groupstable');
 </script>

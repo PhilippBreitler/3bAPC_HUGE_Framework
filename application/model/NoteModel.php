@@ -39,6 +39,25 @@ class NoteModel
         return $query->fetch();
     }
 
+    public static function getNoteMysqli($note_id) {
+        $db = DatabaseFactory::getFactory()->getMysqliConnection(); // ← deine Methode
+
+        $sql  = "SELECT user_id, note_id, note_text FROM notes WHERE user_id = ? AND note_id = ? LIMIT 1";
+        $query = $db->prepare($sql);
+
+        // Typen müssen manuell angegeben werden
+        $userId = Session::get('user_id');
+        $query->bind_param('ii', $userId, $note_id);
+        $query->execute();
+
+        $result = $query->get_result();
+        $note = $result->fetch_object();
+
+        $query->close();
+
+        return $note;
+    }
+
     /**
      * Set a note (create a new one)
      * @param string $note_text note text that will be created

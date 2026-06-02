@@ -23,6 +23,7 @@ class DatabaseFactory
 {
     private static $factory;
     private $database;
+    private $mysqliDatabase;
 
     public static function getFactory()
     {
@@ -60,5 +61,24 @@ class DatabaseFactory
             }
         }
         return $this->database;
+    }
+
+    public function getMysqliConnection() {
+        if (!$this->mysqliDatabase) {
+            $db = new mysqli(
+                Config::get('DB_HOST'),
+                Config::get('DB_USER'),
+                Config::get('DB_PASS'),
+                Config::get('DB_NAME'),
+                Config::get('DB_PORT')
+            );
+            if ($db->connect_errno) {
+                echo 'DB-Fehler (MySQLi): ' . $db->connect_error;
+                exit;
+            }
+            $db->set_charset(Config::get('DB_CHARSET'));
+            $this->mysqliDatabase = $db;
+        }
+        return $this->mysqliDatabase;
     }
 }

@@ -267,7 +267,7 @@ body {
     color: red;
 }
 
-.container form {
+.chat-form {
     display: flex;
     justify-content: flex-end;
     gap: 0.5em;
@@ -275,7 +275,15 @@ body {
     margin: 0.5em auto;
 }
 
-.container form input[type="text"] {
+.chat-form input[type="text"] {
     flex: 1;
     max-width: 300px;
+}
+
+.badge {
+    background-color: red;
+    color: white;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-weight: bold;
 }

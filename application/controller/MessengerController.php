@@ -13,8 +13,6 @@
             $this->View->render('messenger/index', array(
                 'users' => UserModel::getPublicProfilesOfAllUsers(),
                 'chats' => MessengerModel::getChatsByUserId(Session::get('user_id')),    // VOM COPLIOT ERSTELLT
-                'unread'  => MessengerModel::getUnreadCountsByUserId(Session::get('user_id')),
-                'directChats' => MessengerModel::getDirectChatUserMap(Session::get('user_id'))
             ));
         }
 

@@ -12,34 +12,32 @@
             <table id="profilestable" class="overview-table">
                 <thead>
                 <tr>
-                    <td>Id</td>
                     <td>Avatar</td>
                     <td>Username</td>
                     <td>Chat</td>
-                    <td>Ungelesen</td>  <!-- NEU -->
+                    <td>Ungelesen</td>
                 </tr>
                 </thead>
                 <?php foreach ($this->users as $user) { ?>
                     <!-- Damit man man slebst nicht angezeigt wird -->
                     <?php if ($user->user_id == Session::get('user_id')) continue; ?>
-                    <tr class="<?= ($user->user_active == 0 ? 'inactive' : 'active'); ?>">
-                        <td><?= $user->user_id; ?></td>
+                    <tr>
                         <td class="avatar">
                             <?php if (isset($user->user_avatar_link)) { ?>
                                 <img src="<?= $user->user_avatar_link; ?>" />
                             <?php } ?>
                         </td>
-                        <td><?= $user->user_name; ?></td>
+                        <td><?= htmlspecialchars($user->user_name); ?></td>
                         <td>
                             <a href="<?= Config::get('URL') . 'messenger/openChat/' . $user->user_id; ?>">Chat öffnen</a>
                         </td>
                         <td>
-                            <?php 
-                                $chatId = $this->directChats[$user->user_id] ?? null;
-                                if ($chatId && !empty($this->unread[$chatId])): ?>
-                                    <span class="badge" style="background-color: red; color: white; padding: 2px 7px; border-radius: 10px; font-weight: bold;"><?= $this->unread[$chatId]; ?></span>
-                            <?php endif; ?>
-                            </td>
+                            <?php foreach ($this->chats as $chat) { ?>
+                                <?php if (!$chat->is_group && $chat->partner_id == $user->user_id && $chat->unread_count > 0) { ?>
+                                    <span class="badge"><?= $chat->unread_count; ?></span>
+                                    <?php break; ?>
+                                <?php } ?>
+                            <?php } ?>
                         </td>
                     </tr>
                 <?php } ?>
@@ -53,7 +51,6 @@
         <table id="groupstable" class="overview-table">
             <thead>
             <tr>
-                <td>Id</td>
                 <td>Name</td>
                 <td>Gruppe öffnen</td>
                 <td>Ungelesen</td>
@@ -62,12 +59,11 @@
             <?php foreach ($this->chats as $chat): ?>
                 <?php if (!$chat->is_group) continue; ?>
                 <tr>
-                    <td><?= $chat->id; ?></td>
                     <td><?= htmlspecialchars($chat->name); ?></td>
                     <td><a href="<?= Config::get('URL') . 'messenger/showChat/' . $chat->id; ?>">Gruppe öffnen</a></td>
                     <td>
-                        <?php if (!empty($this->unread[$chat->id])): ?>
-                            <span class="badge" style="background-color: red; color: white; padding: 2px 7px; border-radius: 10px; font-weight: bold;"><?= $this->unread[$chat->id]; ?></span>
+                        <?php if ($chat->unread_count > 0): ?>
+                            <span class="badge"><?= $chat->unread_count; ?></span>
                         <?php endif; ?>
                     </td>
                 </tr>

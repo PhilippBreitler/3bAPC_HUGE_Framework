@@ -107,16 +107,48 @@ class MessengerModel {
 
     // VOM COPILOT ERSTELLT
     public static function getChatsByUserId($user_id) {
-        $database = DatabaseFactory::getFactory()->getConnection();
-        $sql = "SELECT c.id, c.name, c.is_group 
-                FROM chats c
-                JOIN chat_participants cp ON cp.chat_id = c.id
-                WHERE cp.user_id = :user_id
-                ORDER BY c.id DESC";
-        $query = $database->prepare($sql);
-        $query->execute([':user_id' => $user_id]);
-        return $query->fetchAll();
+
+    $database = DatabaseFactory::getFactory()->getConnection();
+
+    // Alle Chats des Users holen
+    $sql = "SELECT c.id, c.name, c.is_group 
+            FROM chats c
+            JOIN chat_participants cp ON cp.chat_id = c.id
+            WHERE cp.user_id = :user_id
+            ORDER BY c.id DESC";
+    $query = $database->prepare($sql);
+    $query->execute([':user_id' => $user_id]);
+    $chats = $query->fetchAll();
+
+    // Jeden Chat mit weiteren Infos ergänzen
+    foreach ($chats as $chat) {
+
+        // Ungelesene Nachrichten zählen
+        $sql = "SELECT COUNT(*) AS unread_count
+                FROM messages m
+                JOIN chat_participants cp ON cp.chat_id = m.chat_id AND cp.user_id = :user_id
+                WHERE m.chat_id = :chat_id
+                AND m.sender_id != :sender_id
+                AND (cp.last_read_at IS NULL OR m.created_at > cp.last_read_at)";
+        $q = $database->prepare($sql);
+        $q->execute([':user_id' => $user_id, ':chat_id' => $chat->id, ':sender_id' => $user_id]);
+        $chat->unread_count = (int) $q->fetchColumn();
+
+        // Partner-ID für Einzelchats ermitteln
+        if (!$chat->is_group) {
+            $sql = "SELECT user_id FROM chat_participants 
+                    WHERE chat_id = :chat_id AND user_id != :user_id";
+            $q = $database->prepare($sql);
+            $q->execute([':chat_id' => $chat->id, ':user_id' => $user_id]);
+            $partner = $q->fetch();
+            $chat->partner_id = $partner ? $partner->user_id : null;
+        } else {
+            $chat->partner_id = null;
+        }
     }
+
+    return $chats;
+}
 
 
     public static function markChatAsRead($chat_id, $user_id) {
@@ -125,43 +157,6 @@ class MessengerModel {
                 WHERE chat_id = :chat_id AND user_id = :user_id";
         $query = $database->prepare($sql);
         $query->execute([':chat_id' => $chat_id, ':user_id' => $user_id]);
-    }
-
-    public static function getUnreadCountsByUserId($user_id) {
-        $database = DatabaseFactory::getFactory()->getConnection();
-        $sql = "SELECT cp.chat_id, COUNT(m.id) AS unread_count
-                FROM chat_participants cp
-                JOIN messages m ON m.chat_id = cp.chat_id
-                WHERE cp.user_id = :user_id
-                AND m.sender_id != :user_id
-                AND (cp.last_read_at IS NULL OR m.created_at > cp.last_read_at)
-                GROUP BY cp.chat_id";
-        $query = $database->prepare($sql);
-        $query->execute([':user_id' => $user_id]);
-        // Gibt ein assoziatives Array [chat_id => unread_count] zurück
-        $result = [];
-        foreach ($query->fetchAll() as $row) {
-            $result[$row->chat_id] = (int)$row->unread_count;
-        }
-        return $result;
-    }
-
-
-
-    public static function getDirectChatUserMap($user_id) {
-        $database = DatabaseFactory::getFactory()->getConnection();
-        $sql = "SELECT cp2.user_id AS partner_id, c.id AS chat_id
-                FROM chats c
-                JOIN chat_participants cp1 ON cp1.chat_id = c.id AND cp1.user_id = :user_id
-                JOIN chat_participants cp2 ON cp2.chat_id = c.id AND cp2.user_id != :user_id
-                WHERE c.is_group = 0";
-        $query = $database->prepare($sql);
-        $query->execute([':user_id' => $user_id]);
-        $result = [];
-        foreach ($query->fetchAll() as $row) {
-            $result[$row->partner_id] = $row->chat_id;
-        }
-        return $result;
     }
 
 }

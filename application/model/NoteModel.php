@@ -40,7 +40,7 @@ class NoteModel
     }
 
     public static function getNoteMysqli($note_id) {
-        $db = DatabaseFactory::getFactory()->getMysqliConnection(); // ← deine Methode
+        $db = DatabaseFactory::getFactory()->getMysqliConnection();
 
         $sql  = "SELECT user_id, note_id, note_text FROM notes WHERE user_id = ? AND note_id = ? LIMIT 1";
         $query = $db->prepare($sql);

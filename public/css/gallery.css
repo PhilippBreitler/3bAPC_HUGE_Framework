@@ -1,0 +1,63 @@
+.gallery {
+	--size: 10em;
+	/* control the size */
+	
+	--gap: 1em;
+	/* control the gap */
+	
+	--zoom: 2;
+	/* control the scale factor */
+	
+	display: grid;
+	gap: var(--gap);
+	width: calc(3*var(--size) + 2*var(--gap));
+	aspect-ratio: 1;
+	grid-template-columns: repeat(3, auto);
+}
+
+.gallery figure {
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+.gallery figcaption {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	text-align: center;
+	width: 100%;
+	opacity: 0;
+	color: white;
+	background: rgb(0 0 0 / 0.3);
+}
+
+.gallery figure:hover figcaption,
+.gallery figure:focus figcaption {
+	opacity: 1;
+}
+
+.gallery > figure img {
+	width: 0;
+	height: 0;
+	min-height: 100%;
+	min-width: 100%;
+	object-fit: cover;
+	cursor: pointer;
+	filter: grayscale(80%);
+	transition: .35s linear;
+}
+
+.gallery figure:hover img,
+.gallery figure:focus img {
+	filter: grayscale(0);
+	width: calc(var(--size)*var(--zoom));
+	height: calc(var(--size)*var(--zoom));
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	display: grid;
+	place-content: center;
+}

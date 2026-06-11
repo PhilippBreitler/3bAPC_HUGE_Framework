@@ -8,6 +8,7 @@
     <link rel="icon" href="data:;base64,=">
     <!-- CSS -->
     <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/style.css" />
+    <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/gallery.css" />
     <!-- DataTables/JQuery -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -37,6 +38,9 @@
                 </li>
                 <li <?php if (View::checkForActiveController($filename, "messenger")) { echo ' class="active" '; } ?> >
                     <a href="<?php echo Config::get('URL'); ?>messenger/index">Messenger</a>
+                </li>
+                <li <?php if (View::checkForActiveController($filename, "gallery")) { echo ' class="active" '; } ?> >
+                    <a href="<?php echo Config::get('URL'); ?>gallery/index">Gallery</a>
                 </li>
             <?php } else { ?>
                 <!-- for not logged in users -->

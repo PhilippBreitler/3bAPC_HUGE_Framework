@@ -20,9 +20,15 @@
         <section class="gallery">
             <?php foreach ($this->images as $img): ?>
                 <figure tabindex="1">
-                    <img src="<?= Config::get('URL') ?>gallery/image/<?= $img->image_id ?>"
-                         alt="<?= htmlentities($img->original_name) ?>">
+                    <a href="<?= Config::get('URL') ?>gallery/image/<?= $img->image_id ?>" target="_blank" rel="noopener noreferrer">
+                        <img src="<?= Config::get('URL') ?>gallery/image/<?= $img->image_id ?>"
+                            alt="<?= htmlentities($img->original_name) ?>">
+                    </a>
                     <figcaption><?= htmlentities($img->original_name) ?></figcaption>
+                    <form method="post" action="<?= Config::get('URL') ?>gallery/delete/<?= $img->image_id ?>">
+                        <!-- <button type="submit">Löschen</button> -->
+                    <button type="submit" class="delete-btn">&#x2715;</button>
+                    </form>
                 </figure>
             <?php endforeach; ?>
         </section>

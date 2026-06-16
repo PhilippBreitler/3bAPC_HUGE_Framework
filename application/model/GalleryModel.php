@@ -87,4 +87,42 @@ class GalleryModel {
         if (!$row) return false;
         return Config::get('PATH_USERPICTURES') . Session::get('user_id') . '/' . $row->filename;
     }
+
+
+    public static function deleteImage($image_id) {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        // Nur eigene Bilder abrufbar (user_id-Check!)
+        $sql = "SELECT filename FROM gallery_images 
+                WHERE image_id = :image_id AND user_id = :user_id LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':image_id' => (int)$image_id,
+            ':user_id'  => Session::get('user_id')
+        ]);
+        $row = $query->fetch();
+
+        if (!$row) {
+            Session::add('feedback_negative', 'Bild nicht gefunden.');
+            return false;
+        }
+
+        // Datei vom Server löschen
+        $path = Config::get('PATH_USERPICTURES') . Session::get('user_id') . '/' . $row->filename;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        // DB-Eintrag löschen
+        $sql = "DELETE FROM gallery_images WHERE image_id = :image_id AND user_id = :user_id";
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':image_id' => (int)$image_id,
+            ':user_id'  => Session::get('user_id')
+        ]);
+
+        Session::add('feedback_positive', 'Bild gelöscht.');
+        return true;
+    }
+
 }

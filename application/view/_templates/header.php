@@ -42,6 +42,9 @@
                 <li <?php if (View::checkForActiveController($filename, "gallery")) { echo ' class="active" '; } ?> >
                     <a href="<?php echo Config::get('URL'); ?>gallery/index">Gallery</a>
                 </li>
+                <li <?php if (View::checkForActiveController($filename, "marketplace")) { echo ' class="active" '; } ?> >
+                    <a href="<?php echo Config::get('URL'); ?>marketplace/index">Marketplace</a>
+                </li>
             <?php } else { ?>
                 <!-- for not logged in users -->
                 <li <?php if (View::checkForActiveControllerAndAction($filename, "login/index")) { echo ' class="active" '; } ?> >

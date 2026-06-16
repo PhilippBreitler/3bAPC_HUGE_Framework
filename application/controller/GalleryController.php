@@ -37,4 +37,10 @@ class GalleryController extends Controller {
         readfile($path);
         exit;
     }
+
+
+    public function delete($image_id) {
+        GalleryModel::deleteImage((int)$image_id);
+        Redirect::to('gallery');
+    }
 }

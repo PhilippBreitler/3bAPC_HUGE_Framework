@@ -42,6 +42,9 @@ class AdminModel
             $role = null;
         }
 
+        // $validRoles = array_column(self::getAllRoles(), 'role_id');
+        // $role = in_array($userRole, $validRoles) ? $userRole : null;
+
         // write the above info to the database
         self::writeDeleteAndSuspensionInfoToDatabase($userId, $suspensionTime, $delete, $role);
 

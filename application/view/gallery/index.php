@@ -25,10 +25,12 @@
                             alt="<?= htmlentities($img->original_name) ?>">
                     </a>
                     <figcaption><?= htmlentities($img->original_name) ?></figcaption>
-                    <form method="post" action="<?= Config::get('URL') ?>gallery/delete/<?= $img->image_id ?>">
-                        <!-- <button type="submit">Löschen</button> -->
-                    <button type="submit" class="delete-btn">&#x2715;</button>
-                    </form>
+                    <div class="image-actions">
+                        <a href="<?= Config::get('URL') ?>gallery/download/<?= $img->image_id ?>" class="download-btn" title="Herunterladen">&#x2B07;</a>
+                        <form method="post" action="<?= Config::get('URL') ?>gallery/delete/<?= $img->image_id ?>">
+                            <button type="submit" class="delete-btn">&#x2715;</button>
+                        </form>
+                    </div>
                 </figure>
             <?php endforeach; ?>
         </section>

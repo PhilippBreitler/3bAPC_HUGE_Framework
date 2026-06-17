@@ -62,21 +62,37 @@ body {
 	place-content: center;
 }
 
-.gallery figure .delete-btn {
+.gallery figure .image-actions {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: rgba(200, 0, 0, 0.75);
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.gallery figure:hover .image-actions,
+.gallery figure:focus-within .image-actions {
+    opacity: 1;
+}
+
+.gallery figure .delete-btn,
+.gallery figure .download-btn {
     color: white;
     border: none;
     border-radius: 4px;
     padding: 4px 8px;
     cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s;
+    text-decoration: none;
+    font-size: 1em;
+    line-height: 1;
 }
 
-.gallery figure:hover .delete-btn,
-.gallery figure:focus-within .delete-btn {
-    opacity: 1;
+.gallery figure .delete-btn {
+    background: rgba(200, 0, 0, 0.75);
+}
+
+.gallery figure .download-btn {
+    background: rgba(0, 100, 200, 0.75);
 }

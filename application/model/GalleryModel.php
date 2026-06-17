@@ -92,7 +92,6 @@ class GalleryModel {
     public static function deleteImage($image_id) {
         $database = DatabaseFactory::getFactory()->getConnection();
 
-        // Nur eigene Bilder abrufbar (user_id-Check!)
         $sql = "SELECT filename FROM gallery_images 
                 WHERE image_id = :image_id AND user_id = :user_id LIMIT 1";
         $query = $database->prepare($sql);

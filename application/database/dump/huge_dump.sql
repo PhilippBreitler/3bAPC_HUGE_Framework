@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 16. Jun 2026 um 08:15
+-- Erstellungszeit: 18. Jun 2026 um 08:26
 -- Server-Version: 10.4.32-MariaDB
 -- PHP-Version: 8.2.12
 
@@ -185,9 +185,64 @@ CREATE TABLE `gallery_images` (
 
 INSERT INTO `gallery_images` (`image_id`, `user_id`, `filename`, `original_name`, `uploaded_at`) VALUES
 (2, 1, '1781162231_1_TestBild.jpg', 'TestBild.jpg', 1781162231),
-(3, 1, '1781162876_1_TestBild2.jpg', 'TestBild2.jpg', 1781162876),
 (4, 1, '1781162884_1_TestBild3.jpg', 'TestBild3.jpg', 1781162884),
-(5, 1, '1781165347_1_TestBild4.jpg', 'TestBild4.jpg', 1781165347);
+(7, 1, '1781720032_1_TestBild6.jpg', 'TestBild6.jpg', 1781720032),
+(8, 1, '1781720042_1_Testbild7.jpg', 'Testbild7.jpg', 1781720042),
+(10, 1, '1781720129_1_TestBild5.jpg', 'TestBild5.jpg', 1781720129),
+(11, 2, '1781722283_2_TestBild5.jpg', 'TestBild5.jpg', 1781722283),
+(12, 2, '1781722290_2_Testbild7.jpg', 'Testbild7.jpg', 1781722290);
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `marketplace_categories`
+--
+
+CREATE TABLE `marketplace_categories` (
+  `category_id` int(11) UNSIGNED NOT NULL,
+  `category_name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='marketplace categories';
+
+--
+-- Daten für Tabelle `marketplace_categories`
+--
+
+INSERT INTO `marketplace_categories` (`category_id`, `category_name`) VALUES
+(1, 'Elektronik'),
+(2, 'Kleidung'),
+(3, 'Bücher'),
+(4, 'Sport & Freizeit'),
+(5, 'Sonstiges');
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `marketplace_listings`
+--
+
+CREATE TABLE `marketplace_listings` (
+  `listing_id` int(11) UNSIGNED NOT NULL,
+  `user_id` int(11) NOT NULL COMMENT 'FK to users.user_id',
+  `category_id` int(11) UNSIGNED NOT NULL COMMENT 'FK to marketplace_categories.category_id',
+  `listing_title` varchar(150) NOT NULL,
+  `listing_description` text NOT NULL,
+  `listing_price` decimal(10,2) UNSIGNED NOT NULL,
+  `listing_active` tinyint(1) NOT NULL DEFAULT 1 COMMENT '1 = aktiv, 0 = gelöscht/verkauft',
+  `listing_creation_timestamp` bigint(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='marketplace listings';
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `marketplace_photos`
+--
+
+CREATE TABLE `marketplace_photos` (
+  `photo_id` int(11) UNSIGNED NOT NULL,
+  `listing_id` int(11) UNSIGNED NOT NULL COMMENT 'FK to marketplace_listings.listing_id',
+  `photo_filename` varchar(255) NOT NULL,
+  `photo_order` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Reihenfolge der Fotos (1-3)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='photos for marketplace listings';
 
 -- --------------------------------------------------------
 
@@ -305,8 +360,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `session_id`, `user_name`, `user_password_hash`, `user_email`, `user_active`, `user_deleted`, `user_account_type`, `user_has_avatar`, `user_remember_me_token`, `user_creation_timestamp`, `user_suspension_timestamp`, `user_last_login_timestamp`, `user_failed_logins`, `user_last_failed_login`, `user_activation_hash`, `user_password_reset_hash`, `user_password_reset_timestamp`, `user_provider_type`) VALUES
-(1, 'ta3ccsavqnvi76gc6b2hkiirks', 'demo', '$2y$10$OvprunjvKOOhM1h9bzMPs.vuwGIsOqZbw88rzSyGCTJTcE61g5WXi', 'demo@demo.com', 1, 0, 7, 0, NULL, 1422205178, NULL, 1781163982, 0, NULL, NULL, NULL, NULL, 'DEFAULT'),
-(2, NULL, 'demo2', '$2y$10$OvprunjvKOOhM1h9bzMPs.vuwGIsOqZbw88rzSyGCTJTcE61g5WXi', 'demo2@demo.com', 1, 0, 2, 0, NULL, 1422205178, NULL, 1781163236, 0, NULL, NULL, NULL, NULL, 'DEFAULT'),
+(1, NULL, 'demo', '$2y$10$OvprunjvKOOhM1h9bzMPs.vuwGIsOqZbw88rzSyGCTJTcE61g5WXi', 'demo@demo.com', 1, 0, 7, 0, NULL, 1422205178, NULL, 1781719148, 0, NULL, NULL, NULL, NULL, 'DEFAULT'),
+(2, '12t0e5cs1mk8m3gteg7u2sjmgv', 'demo2', '$2y$10$OvprunjvKOOhM1h9bzMPs.vuwGIsOqZbw88rzSyGCTJTcE61g5WXi', 'demo2@demo.com', 1, 0, 2, 0, NULL, 1422205178, NULL, 1781722274, 0, NULL, NULL, NULL, NULL, 'DEFAULT'),
 (3, NULL, 'philipp', '$2y$10$iUhqD.7qChy4FYnrVuxDVer2baKa5DAFG.rEHRlq1/luX.papuEIO', 'philipp.breitler@email.com', 1, 0, 1, 0, NULL, 1778591579, NULL, 1781010784, 0, NULL, NULL, NULL, NULL, 'DEFAULT'),
 (4, NULL, 'philipp2', '$2y$10$N9dLE4m1Ox0Luu9UB1ZiDu.tVKO2mFY0LmRBq9eb/15P9QQBJ.qyG', 'philipp2.breitler@email.com', 1, 0, 1, 0, NULL, 1778591626, NULL, 1780424690, 0, NULL, NULL, NULL, NULL, 'DEFAULT'),
 (5, NULL, 'max', '$2y$10$jxOx8MrSjl7EH.8HqU08PeNH5j0s3sbgWBrOj/cpmxu1k6mo8xiHy', 'muster@mann.com', 1, 0, 2, 0, NULL, 1778592415, NULL, 1781010797, 0, NULL, NULL, NULL, NULL, 'DEFAULT');
@@ -355,6 +410,27 @@ ALTER TABLE `gallery_images`
   ADD PRIMARY KEY (`image_id`);
 
 --
+-- Indizes für die Tabelle `marketplace_categories`
+--
+ALTER TABLE `marketplace_categories`
+  ADD PRIMARY KEY (`category_id`);
+
+--
+-- Indizes für die Tabelle `marketplace_listings`
+--
+ALTER TABLE `marketplace_listings`
+  ADD PRIMARY KEY (`listing_id`),
+  ADD KEY `fk_listing_user` (`user_id`),
+  ADD KEY `fk_listing_category` (`category_id`);
+
+--
+-- Indizes für die Tabelle `marketplace_photos`
+--
+ALTER TABLE `marketplace_photos`
+  ADD PRIMARY KEY (`photo_id`),
+  ADD KEY `fk_photo_listing` (`listing_id`);
+
+--
 -- Indizes für die Tabelle `messages`
 --
 ALTER TABLE `messages`
@@ -397,7 +473,25 @@ ALTER TABLE `chats`
 -- AUTO_INCREMENT für Tabelle `gallery_images`
 --
 ALTER TABLE `gallery_images`
-  MODIFY `image_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `image_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT für Tabelle `marketplace_categories`
+--
+ALTER TABLE `marketplace_categories`
+  MODIFY `category_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT für Tabelle `marketplace_listings`
+--
+ALTER TABLE `marketplace_listings`
+  MODIFY `listing_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle `marketplace_photos`
+--
+ALTER TABLE `marketplace_photos`
+  MODIFY `photo_id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `messages`

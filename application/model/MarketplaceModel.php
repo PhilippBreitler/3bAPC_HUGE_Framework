@@ -18,13 +18,34 @@ class MarketplaceModel {
                 JOIN marketplace_categories c ON c.category_id = l.category_id
                 JOIN users u ON u.user_id = l.user_id
                 WHERE l.listing_active = 1
+                    AND l.user_id != :user_id
                 ORDER BY l.listing_creation_timestamp DESC";
 
         $query = $database->prepare($sql);
-        $query->execute();
+        $query->execute([':user_id' => Session::get('user_id')]);
 
         return $query->fetchAll();
     }
+
+    public static function getMyListings()
+        {
+            $database = DatabaseFactory::getFactory()->getConnection();
+
+            $sql = "SELECT l.listing_id, l.listing_title, l.listing_price,
+                        c.category_name,
+                        (SELECT p.photo_id FROM marketplace_photos p
+                            WHERE p.listing_id = l.listing_id ORDER BY p.photo_order ASC LIMIT 1) AS first_photo_id
+                    FROM marketplace_listings l
+                    JOIN marketplace_categories c ON c.category_id = l.category_id
+                    WHERE l.user_id = :user_id
+                    AND l.listing_active = 1
+                    ORDER BY l.listing_creation_timestamp DESC";
+
+            $query = $database->prepare($sql);
+            $query->execute([':user_id' => Session::get('user_id')]);
+
+            return $query->fetchAll();
+        }
 
     /**
      * Gibt alle Kategorien zurück (für das Dropdown im Formular).
@@ -146,6 +167,39 @@ class MarketplaceModel {
                 ':order'      => ($i + 1)
             ]);
         }
+    }
+
+
+    public static function getListingById($listing_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "SELECT l.listing_id, l.listing_title, l.listing_description, l.listing_price,
+                    l.listing_creation_timestamp, l.user_id,
+                    c.category_name, u.user_name
+                FROM marketplace_listings l
+                JOIN marketplace_categories c ON c.category_id = l.category_id
+                JOIN users u ON u.user_id = l.user_id
+                WHERE l.listing_id = :listing_id
+                AND l.listing_active = 1
+                LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute([':listing_id' => (int)$listing_id]);
+
+        return $query->fetch();
+    }
+
+    public static function getListingPhotos($listing_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "SELECT photo_id FROM marketplace_photos
+                WHERE listing_id = :listing_id
+                ORDER BY photo_order ASC";
+        $query = $database->prepare($sql);
+        $query->execute([':listing_id' => (int)$listing_id]);
+
+        return $query->fetchAll();
     }
 
 

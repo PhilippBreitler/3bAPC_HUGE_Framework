@@ -11,7 +11,9 @@ class MarketplaceController extends Controller {
     // Übersicht mit allen Angeboten
     public function index() {
         $this->View->render('marketplace/index', [
-            'listings' => MarketplaceModel::getAllListings()
+            'listings' => MarketplaceModel::getAllListings(),
+            'my_listings' => MarketplaceModel::getMyListings(),
+            'active_tab'  => $_GET['tab'] ?? 'all'
         ]);
     }
 
@@ -52,6 +54,21 @@ class MarketplaceController extends Controller {
         header('Content-Length: ' . filesize($path));
         readfile($path);
         exit;
+    }
+
+    public function view($listing_id)
+    {
+        $listing = MarketplaceModel::getListingById((int)$listing_id);
+
+        if (!$listing) {
+            Redirect::to('error/index/404');
+            return;
+        }
+
+        $this->View->render('marketplace/view', [
+            'listing' => $listing,
+            'photos'  => MarketplaceModel::getListingPhotos((int)$listing_id),
+        ]);
     }
 
 }

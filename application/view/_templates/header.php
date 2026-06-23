@@ -45,6 +45,14 @@
                 </li>
                 <li <?php if (View::checkForActiveController($filename, "marketplace")) { echo ' class="active" '; } ?> >
                     <a href="<?php echo Config::get('URL'); ?>marketplace/index">Marketplace</a>
+                    <ul class="navigation-submenu">
+                        <li>
+                            <a href="<?php echo Config::get('URL'); ?>marketplace/index?tab=all">Angebote</a>
+                        </li>
+                        <li>
+                            <a href="<?php echo Config::get('URL'); ?>marketplace/index?tab=mine">Meine Angebote</a>
+                        </li>
+                    </ul>
                 </li>
             <?php } else { ?>
                 <!-- for not logged in users -->

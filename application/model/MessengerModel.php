@@ -14,6 +14,45 @@ class MessengerModel {
         return $result->chat_id;
     }
 
+    public static function getOrCreateListingChat($buyer_id, $seller_id, $listing_id, $listing_title)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        // Bestehenden Listing-Chat zwischen den zwei Usern suchen
+        $sql = "SELECT c.id
+                FROM chats c
+                JOIN chat_participants cp1 ON cp1.chat_id = c.id AND cp1.user_id = :buyer_id
+                JOIN chat_participants cp2 ON cp2.chat_id = c.id AND cp2.user_id = :seller_id
+                WHERE c.is_group = 0
+                AND c.listing_id = :listing_id
+                LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':buyer_id'   => (int)$buyer_id,
+            ':seller_id'  => (int)$seller_id,
+            ':listing_id' => (int)$listing_id,
+        ]);
+        $row = $query->fetch();
+
+        if ($row) {
+            return $row->id;
+        }
+
+        // Keinen gefunden → neuen Chat anlegen
+        $query = $database->prepare("INSERT INTO chats (name, is_group, listing_id) VALUES (:name, 0, :listing_id)");
+        $query->execute([
+            ':name'       => $listing_title,
+            ':listing_id' => (int)$listing_id,
+        ]);
+        $chat_id = $database->lastInsertId();
+
+        $query = $database->prepare("INSERT INTO chat_participants (chat_id, user_id) VALUES (:chat_id, :user_id)");
+        $query->execute([':chat_id' => $chat_id, ':user_id' => (int)$buyer_id]);
+        $query->execute([':chat_id' => $chat_id, ':user_id' => (int)$seller_id]);
+
+        return $chat_id;
+    }
+
 
     public static function getMessagesByChatId($chat_id) {
 

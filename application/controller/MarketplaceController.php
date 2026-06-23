@@ -71,4 +71,21 @@ class MarketplaceController extends Controller {
         ]);
     }
 
+    public function contactSeller($listing_id)
+    {
+        $listing = MarketplaceModel::getListingById((int)$listing_id);
+
+        if (!$listing || $listing->user_id == Session::get('user_id')) {
+            Redirect::to('marketplace/index');
+            return;
+        }
+
+        $chat_id = MessengerModel::getOrCreateListingChat(
+            Session::get('user_id'),
+            $listing->user_id,
+            (int)$listing_id,
+            $listing->listing_title
+        );
+        Redirect::to('messenger/showChat/' . $chat_id);
+    }
 }

@@ -39,7 +39,7 @@
             </p>
 
             <?php if ($this->listing->user_id !== Session::get('user_id')): ?>
-                <a href="<?php echo Config::get('URL'); ?>messenger/index" class="mp-btn" style="margin-top: 15px;">
+                <a href="<?php echo Config::get('URL'); ?>marketplace/contactSeller/<?php echo $this->listing->listing_id; ?>" class="mp-btn" style="margin-top: 15px;">
                     Verkäufer kontaktieren
                 </a>
             <?php else: ?>

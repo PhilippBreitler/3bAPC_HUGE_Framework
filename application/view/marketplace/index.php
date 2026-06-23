@@ -2,8 +2,8 @@
     <h1>Marketplace</h1>
     <?php $this->renderFeedbackMessages(); ?>
 
-    <div class="box" style="display: flex; align-items: center; justify-content: space-between;">
-        <h2 style="margin: 0;">Marketplace</h2>
+    <div class="box">
+        <h2>Offene Angebote</h2>
         <a href="<?php echo Config::get('URL'); ?>marketplace/create" class="mp-btn">+ Neues Angebot</a>
     </div>
 

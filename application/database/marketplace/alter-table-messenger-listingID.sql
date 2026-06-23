@@ -1,0 +1,1 @@
+ALTER TABLE `chats` ADD COLUMN `listing_id` INT(11) UNSIGNED NULL DEFAULT NULL AFTER `is_group`;

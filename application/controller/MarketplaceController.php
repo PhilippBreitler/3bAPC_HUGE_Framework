@@ -36,4 +36,22 @@ class MarketplaceController extends Controller {
         ]);
     }
 
+
+    public function photo($photo_id) {
+        $path = MarketplaceModel::getPhotoPath((int)$photo_id);
+
+        if (!$path || !file_exists($path)) {
+            Redirect::to('error/index/404');
+            return;
+        }
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime  = $finfo->file($path);
+
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
+        exit;
+    }
+
 }

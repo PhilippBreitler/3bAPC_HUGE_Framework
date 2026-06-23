@@ -147,4 +147,26 @@ class MarketplaceModel {
             ]);
         }
     }
+
+
+    /**
+     * Gibt den absoluten Dateipfad eines Fotos zurück (für readfile()).
+     * Gibt false zurück wenn das Foto nicht existiert.
+     */
+    public static function getPhotoPath($photo_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "SELECT listing_id, photo_filename
+                FROM marketplace_photos
+                WHERE photo_id = :photo_id
+                LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute([':photo_id' => (int)$photo_id]);
+        $row = $query->fetch();
+
+        if (!$row) return false;
+
+        return Config::get('PATH_USERPICTURES') . 'marketplace/' . (int)$row->listing_id . '/' . $row->photo_filename;
+    }
 }

@@ -3,3 +3,6 @@
 /nbproject/private/
 # don't commit all the dependencies fetched via Composer
 /vendor/
+
+# don't commit uploaded user images
+/userpictures/

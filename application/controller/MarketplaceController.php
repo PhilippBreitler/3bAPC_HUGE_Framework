@@ -10,10 +10,18 @@ class MarketplaceController extends Controller {
 
     // Übersicht mit allen Angeboten
     public function index() {
+        $filters = [
+            'category_id' => $_GET['category_id'] ?? null,
+            'price_min'   => $_GET['price_min']   ?? null,
+            'price_max'   => $_GET['price_max']   ?? null,
+        ];
+
         $this->View->render('marketplace/index', [
-            'listings' => MarketplaceModel::getAllListings(),
+            'listings' => MarketplaceModel::getAllListings($filters),
             'my_listings' => MarketplaceModel::getMyListings(),
-            'active_tab'  => $_GET['tab'] ?? 'all'
+            'categories'  => MarketplaceModel::getCategories(),
+            'active_tab'  => $_GET['tab'] ?? 'all',
+            'filters'     => $filters
         ]);
     }
 
@@ -118,5 +126,29 @@ class MarketplaceController extends Controller {
         MarketplaceModel::deleteListing((int)$listing_id, Session::get('user_id'));
         Session::add('feedback_positive', 'Angebot wurde entfernt.');
         Redirect::to('marketplace/index?tab=mine');
+    }
+
+
+
+    public function edit($listing_id)
+    {
+        $listing = MarketplaceModel::getListingById((int)$listing_id);
+
+        if (!$listing || $listing->user_id != Session::get('user_id')) {
+            Redirect::to('marketplace/index?tab=mine');
+            return;
+        }
+
+        if (Request::post('submit') !== null) {
+            $success = MarketplaceModel::updateListing((int)$listing_id, Session::get('user_id'), $_POST);
+            if ($success) {
+                Redirect::to('marketplace/view/' . $listing_id);
+            }
+        }
+
+        $this->View->render('marketplace/edit', [
+            'listing'    => $listing,
+            'categories' => MarketplaceModel::getCategories(),
+        ]);
     }
 }

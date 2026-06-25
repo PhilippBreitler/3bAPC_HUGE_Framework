@@ -6,9 +6,25 @@ class MarketplaceModel {
      * Gibt alle aktiven Listings zurück (neueste zuerst).
      * Lädt auch die ID des ersten Fotos für die Vorschau.
      */
-    public static function getAllListings()
+    public static function getAllListings($filters = [])
     {
         $database = DatabaseFactory::getFactory()->getConnection();
+
+        $where  = ['l.listing_active = 1', 'l.user_id != :user_id'];
+        $params = [':user_id' => Session::get('user_id')];
+
+        if (!empty($filters['category_id'])) {
+            $where[] = 'l.category_id = :category_id';
+            $params[':category_id'] = (int)$filters['category_id'];
+        }
+        if (isset($filters['price_min']) && $filters['price_min'] !== '') {
+            $where[] = 'l.listing_price >= :price_min';
+            $params[':price_min'] = (float)$filters['price_min'];
+        }
+        if (isset($filters['price_max']) && $filters['price_max'] !== '') {
+            $where[] = 'l.listing_price <= :price_max';
+            $params[':price_max'] = (float)$filters['price_max'];
+        }
 
         $sql = "SELECT l.listing_id, l.listing_title, l.listing_price,
                        c.category_name, u.user_name,
@@ -17,12 +33,14 @@ class MarketplaceModel {
                 FROM marketplace_listings l
                 JOIN marketplace_categories c ON c.category_id = l.category_id
                 JOIN users u ON u.user_id = l.user_id
-                WHERE l.listing_active = 1
-                    AND l.user_id != :user_id
+                -- WHERE l.listing_active = 1
+                --     AND l.user_id != :user_id
+                WHERE " . implode(' AND ', $where) . "
                 ORDER BY l.listing_creation_timestamp DESC";
 
         $query = $database->prepare($sql);
-        $query->execute([':user_id' => Session::get('user_id')]);
+        // $query->execute([':user_id' => Session::get('user_id')]);
+        $query->execute($params);
 
         return $query->fetchAll();
     }
@@ -175,7 +193,7 @@ class MarketplaceModel {
         $database = DatabaseFactory::getFactory()->getConnection();
 
         $sql = "SELECT l.listing_id, l.listing_title, l.listing_description, l.listing_price,
-                    l.listing_creation_timestamp, l.user_id,
+                    l.listing_creation_timestamp, l.user_id, l.category_id,
                     c.category_name, u.user_name
                 FROM marketplace_listings l
                 JOIN marketplace_categories c ON c.category_id = l.category_id
@@ -269,4 +287,45 @@ class MarketplaceModel {
         ]);
         return $query->rowCount() === 1;
     }
+
+
+
+    public static function updateListing($listing_id, $owner_id, $data)
+{
+    if (empty($data['title']) || empty($data['description']) || empty($data['price']) || empty($data['category_id'])) {
+        Session::add('feedback_negative', 'Bitte alle Pflichtfelder ausfüllen.');
+        return false;
+    }
+    if (!is_numeric($data['price']) || $data['price'] <= 0) {
+        Session::add('feedback_negative', 'Bitte einen gültigen Preis eingeben.');
+        return false;
+    }
+
+    $database = DatabaseFactory::getFactory()->getConnection();
+
+    $sql = "UPDATE marketplace_listings
+            SET listing_title       = :title,
+                listing_description = :description,
+                listing_price       = :price,
+                category_id         = :category_id
+            WHERE listing_id = :listing_id
+              AND user_id    = :owner_id";
+    $query = $database->prepare($sql);
+    $query->execute([
+        ':title'       => trim($data['title']),
+        ':description' => trim($data['description']),
+        ':price'       => (float)$data['price'],
+        ':category_id' => (int)$data['category_id'],
+        ':listing_id'  => (int)$listing_id,
+        ':owner_id'    => (int)$owner_id,
+    ]);
+
+    if ($query->rowCount() < 1) {
+        Session::add('feedback_negative', 'Keine Änderungen gespeichert.');
+        return false;
+    }
+
+    Session::add('feedback_positive', 'Angebot erfolgreich aktualisiert.');
+    return true;
+}
 }

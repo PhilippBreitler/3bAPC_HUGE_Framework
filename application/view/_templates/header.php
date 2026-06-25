@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/style.css" />
     <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/gallery.css" />
     <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/marketplace.css" />
+    <link rel="stylesheet" href="<?php echo Config::get('URL'); ?>css/marketplace_buttons.css" />
     <!-- DataTables/JQuery -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>

@@ -223,4 +223,50 @@ class MarketplaceModel {
 
         return Config::get('PATH_USERPICTURES') . 'marketplace/' . (int)$row->listing_id . '/' . $row->photo_filename;
     }
+
+
+    public static function getListingInquiries($listing_id, $owner_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "SELECT c.id AS chat_id,
+                    u.user_name AS buyer_name,
+                    COUNT(CASE
+                        WHEN m.sender_id != :owner_id
+                            AND (cp_owner.last_read_at IS NULL OR m.created_at > cp_owner.last_read_at)
+                        THEN 1
+                    END) AS unread_count
+                FROM chats c
+                JOIN chat_participants cp_owner ON cp_owner.chat_id = c.id AND cp_owner.user_id = :owner_id
+                JOIN chat_participants cp_buyer ON cp_buyer.chat_id = c.id AND cp_buyer.user_id != :owner_id
+                JOIN users u ON u.user_id = cp_buyer.user_id
+                LEFT JOIN messages m ON m.chat_id = c.id
+                WHERE c.listing_id = :listing_id
+                GROUP BY c.id, u.user_name
+                ORDER BY unread_count DESC, c.id DESC";
+
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':listing_id' => (int)$listing_id,
+            ':owner_id'   => (int)$owner_id,
+        ]);
+
+        return $query->fetchAll();
+    }
+
+
+    public static function deleteListing($listing_id, $owner_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "UPDATE marketplace_listings
+                SET listing_active = 0
+                WHERE listing_id = :listing_id AND user_id = :owner_id";
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':listing_id' => (int)$listing_id,
+            ':owner_id'   => (int)$owner_id,
+        ]);
+        return $query->rowCount() === 1;
+    }
 }

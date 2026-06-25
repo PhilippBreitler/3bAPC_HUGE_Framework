@@ -46,6 +46,11 @@
                 <a href="<?php echo Config::get('URL'); ?>marketplace/edit/<?php echo $this->listing->listing_id; ?>" class="mp-btn" style="margin-top: 15px;">
                     Angebot bearbeiten
                 </a>
+                    <a href="<?php echo Config::get('URL'); ?>marketplace/delete/<?php echo $this->listing->listing_id; ?>"
+                    class="mp-btn" style="margin-top: 8px; display: block; background-color: #454545;"
+                    onclick="return confirm('Verkauf bestätigen? Das Angebot wird entfernt.');">
+                        Verkauft ✓
+                </a>
             <?php endif; ?>
         </div>
 

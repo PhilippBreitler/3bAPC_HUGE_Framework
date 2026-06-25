@@ -58,6 +58,9 @@
                                 <a href="<?php echo Config::get('URL'); ?>marketplace/delete/<?php echo $listing->listing_id; ?>"
                                    class="mp-card-action-delete"
                                    onclick="return confirm('Angebot wirklich löschen?');">Löschen</a>
+                                <a href="<?php echo Config::get('URL'); ?>marketplace/delete/<?php echo $listing->listing_id; ?>"
+                                    class="mp-card-action-delete">Verkauft</a>
+                                <a href="<?php echo Config::get('URL'); ?>marketplace/inquiries/<?php echo $listing->listing_id; ?>">Anfragen</a>
                             </div>
                         </div>
                     </div>

@@ -88,4 +88,35 @@ class MarketplaceController extends Controller {
         );
         Redirect::to('messenger/showChat/' . $chat_id);
     }
+
+
+    public function inquiries($listing_id)
+    {
+        $listing = MarketplaceModel::getListingById((int)$listing_id);
+
+        // Nur der Eigentümer darf die Anfragen sehen
+        if (!$listing || $listing->user_id != Session::get('user_id')) {
+            Redirect::to('marketplace/index?tab=mine');
+            return;
+        }
+
+        $this->View->render('marketplace/inquiries', [
+            'listing'    => $listing,
+            'inquiries'  => MarketplaceModel::getListingInquiries((int)$listing_id, Session::get('user_id')),
+        ]);
+    }
+
+    public function delete($listing_id)
+    {
+        $listing = MarketplaceModel::getListingById((int)$listing_id);
+
+        if (!$listing || $listing->user_id != Session::get('user_id')) {
+            Redirect::to('marketplace/index?tab=mine');
+            return;
+        }
+
+        MarketplaceModel::deleteListing((int)$listing_id, Session::get('user_id'));
+        Session::add('feedback_positive', 'Angebot wurde entfernt.');
+        Redirect::to('marketplace/index?tab=mine');
+    }
 }

@@ -1,5 +1,11 @@
-
 <div class="container">
+
+    <h1>Marketplace</h1>
+    <div class="box">
+        <h2>Angebot Details</h2>
+
+        <!-- echo out the system feedback (error and success messages) -->
+        <?php $this->renderFeedbackMessages(); ?>
 
     <a href="<?php echo Config::get('URL'); ?>marketplace/index" class="mp-back-link">&larr; Zurück zur Übersicht</a>
 

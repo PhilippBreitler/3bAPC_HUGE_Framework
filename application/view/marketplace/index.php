@@ -120,7 +120,7 @@
                                 <!-- <a href="<?php echo Config::get('URL'); ?>marketplace/delete/<?php echo $listing->listing_id; ?>"
                                     class="mp-card-action-delete">Verkauft</a> -->
                                 <a href="<?php echo Config::get('URL'); ?>marketplace/inquiries/<?php echo $listing->listing_id; ?>" class="mp-inquiry-icon-btn" title="Anfragen"></a>
-                                <a href="<?php echo Config::get('URL'); ?>marketplace/delete/<?php echo $listing->listing_id; ?>"
+                                <a href="<?php echo Config::get('URL'); ?>marketplace/markAsSold/<?php echo $listing->listing_id; ?>"
                                     class="mp-sold-icon-btn"
                                     title="Verkauft"
                                     aria-label="Verkauft">$</a>

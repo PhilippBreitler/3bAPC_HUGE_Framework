@@ -19,9 +19,10 @@
                 <div class="mp-col">
                     <label for="category_id" class="mp-label">Kategorie</label>
                     <select id="category_id" name="category_id" required class="mp-input">
-                        <option value="">-- bitte wählen --</option>
+                        <!-- <option value="">-- bitte wählen --</option> -->
+                         <option value=""></option>
                         <?php foreach ($this->categories as $cat): ?>
-                            <option value="<?php echo $cat->category_id; ?>">
+                            <option value="<?php echo $cat->category_id; ?>"
                                 <?php if (isset($_POST['category_id']) && $_POST['category_id'] == $cat->category_id) echo 'selected'; ?>>
                                 <?php echo htmlspecialchars($cat->category_name); ?>
                             </option>
@@ -32,12 +33,12 @@
                 <div class="mp-col">
                     <label for="price" class="mp-label">Preis (€)</label>
                     <input type="number" id="price" name="price" min="0.01" step="0.01" required class="mp-input"
-                        value="<?php echo htmlspecialchars($_POST['price'] ?? ''); ?>" />
+                        value="<?php echo htmlspecialchars($_POST['price'] ?? '0.00'); ?>" />
                 </div>
             </div>
 
             <div class="mp-form-group">
-                <label for="description" class="mp-label">Beschreibung *</label>
+                <label for="description" class="mp-label">Beschreibung</label>
                 <textarea id="description" name="description" rows="6" required class="mp-input"><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
             </div>
 

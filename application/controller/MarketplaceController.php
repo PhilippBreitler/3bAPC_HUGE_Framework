@@ -37,6 +37,7 @@ class MarketplaceController extends Controller {
 
             if ($listing_id) {
                 Redirect::to('marketplace/index?tab=mine');
+                return;
             }
         }
 
@@ -128,6 +129,20 @@ class MarketplaceController extends Controller {
         Redirect::to('marketplace/index?tab=mine');
     }
 
+    public function markAsSold($listing_id)
+    {
+        $listing = MarketplaceModel::getListingById((int)$listing_id);
+
+        if (!$listing || $listing->user_id != Session::get('user_id')) {
+            Redirect::to('marketplace/index?tab=mine');
+            return;
+        }
+
+        MarketplaceModel::deleteListing((int)$listing_id, Session::get('user_id'));
+        Session::add('feedback_positive', 'Angebot wurde erfolgreich verkauft.');
+        Redirect::to('marketplace/index?tab=mine');
+        return;
+    }
 
 
     public function edit($listing_id)
@@ -154,6 +169,7 @@ class MarketplaceController extends Controller {
             }
             if ($success) {
             Redirect::to('marketplace/view/' . $listing_id);
+            return;
             }
         }
 

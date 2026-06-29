@@ -301,6 +301,18 @@ class MarketplaceModel {
     }
 
 
+    public static function markAsSold($listing_id, $owner_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+        $sql = "UPDATE marketplace_listings
+                SET listing_active = 0
+                WHERE listing_id = :listing_id AND user_id = :owner_id";
+        $query = $database->prepare($sql);
+        $query->execute([':listing_id' => (int)$listing_id, ':owner_id' => (int)$owner_id]);
+        return $query->rowCount() === 1;
+    }
+
+
 
     public static function updateListing($listing_id, $owner_id, $data)
     {

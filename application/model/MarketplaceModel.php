@@ -135,7 +135,7 @@ class MarketplaceModel {
      * Speichert bis zu 3 Fotos für ein Listing.
      * Wird nur intern von createListing() aufgerufen.
      */
-    private static function uploadPhotos($listing_id, $files)
+    public static function uploadPhotos($listing_id, $files)
     {
         $database = DatabaseFactory::getFactory()->getConnection();
         $allowed_mimes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -147,8 +147,20 @@ class MarketplaceModel {
             mkdir($dir, 0755, true);
         }
 
+
+        // Bestehende Foto-Anzahl prüfen
+        $existing = $database->prepare("SELECT COUNT(*) FROM marketplace_photos WHERE listing_id = :id");
+        $existing->execute([':id' => (int)$listing_id]);
+        $existingCount = (int)$existing->fetchColumn();
+
+        $maxNew = 3 - $existingCount;
+        if ($maxNew <= 0) {
+            Session::add('feedback_negative', 'Bereits 3 Fotos vorhanden. Bitte erst ein Foto löschen.');
+            return;
+        }
+
         // Maximal 3 Fotos verarbeiten
-        $count = min(count($files['name']), 3);
+        $count = min(count($files['name']), $maxNew);
 
         for ($i = 0; $i < $count; $i++) {
             // Leere oder fehlerhafte Uploads überspringen
@@ -291,41 +303,75 @@ class MarketplaceModel {
 
 
     public static function updateListing($listing_id, $owner_id, $data)
-{
-    if (empty($data['title']) || empty($data['description']) || empty($data['price']) || empty($data['category_id'])) {
-        Session::add('feedback_negative', 'Bitte alle Pflichtfelder ausfüllen.');
-        return false;
+    {
+        if (empty($data['title']) || empty($data['description']) || empty($data['price']) || empty($data['category_id'])) {
+            Session::add('feedback_negative', 'Bitte alle Pflichtfelder ausfüllen.');
+            return false;
+        }
+        if (!is_numeric($data['price']) || $data['price'] <= 0) {
+            Session::add('feedback_negative', 'Bitte einen gültigen Preis eingeben.');
+            return false;
+        }
+
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        $sql = "UPDATE marketplace_listings
+                SET listing_title       = :title,
+                    listing_description = :description,
+                    listing_price       = :price,
+                    category_id         = :category_id
+                WHERE listing_id = :listing_id
+                AND user_id    = :owner_id";
+        $query = $database->prepare($sql);
+        $query->execute([
+            ':title'       => trim($data['title']),
+            ':description' => trim($data['description']),
+            ':price'       => (float)$data['price'],
+            ':category_id' => (int)$data['category_id'],
+            ':listing_id'  => (int)$listing_id,
+            ':owner_id'    => (int)$owner_id,
+        ]);
+
+        // if ($query->rowCount() < 1) {
+        //     Session::add('feedback_negative', 'Keine Änderungen gespeichert.');
+        //     return false;
+        // }
+
+        Session::add('feedback_positive', 'Angebot erfolgreich aktualisiert.');
+        return true;
     }
-    if (!is_numeric($data['price']) || $data['price'] <= 0) {
-        Session::add('feedback_negative', 'Bitte einen gültigen Preis eingeben.');
-        return false;
+
+
+    public static function deletePhoto($photo_id, $owner_id)
+    {
+        $database = DatabaseFactory::getFactory()->getConnection();
+
+        // Sicherstellen, dass das Foto dem Owner gehört
+        $sql = "SELECT p.listing_id, p.photo_filename
+                FROM marketplace_photos p
+                JOIN marketplace_listings l ON l.listing_id = p.listing_id
+                WHERE p.photo_id = :photo_id AND l.user_id = :owner_id
+                LIMIT 1";
+        $query = $database->prepare($sql);
+        $query->execute([':photo_id' => (int)$photo_id, ':owner_id' => (int)$owner_id]);
+        $row = $query->fetch();
+
+        if (!$row) return false;
+
+        // Datei löschen
+        $path = Config::get('PATH_USERPICTURES') . 'marketplace/' . (int)$row->listing_id . '/' . $row->photo_filename;
+        if (file_exists($path)) {
+            unlink($path);
+        }
+
+        // DB-Eintrag löschen
+        $sql = "DELETE FROM marketplace_photos WHERE photo_id = :photo_id";
+        $query = $database->prepare($sql);
+        $query->execute([':photo_id' => (int)$photo_id]);
+
+        return $query->rowCount() === 1;
     }
-
-    $database = DatabaseFactory::getFactory()->getConnection();
-
-    $sql = "UPDATE marketplace_listings
-            SET listing_title       = :title,
-                listing_description = :description,
-                listing_price       = :price,
-                category_id         = :category_id
-            WHERE listing_id = :listing_id
-              AND user_id    = :owner_id";
-    $query = $database->prepare($sql);
-    $query->execute([
-        ':title'       => trim($data['title']),
-        ':description' => trim($data['description']),
-        ':price'       => (float)$data['price'],
-        ':category_id' => (int)$data['category_id'],
-        ':listing_id'  => (int)$listing_id,
-        ':owner_id'    => (int)$owner_id,
-    ]);
-
-    if ($query->rowCount() < 1) {
-        Session::add('feedback_negative', 'Keine Änderungen gespeichert.');
-        return false;
-    }
-
-    Session::add('feedback_positive', 'Angebot erfolgreich aktualisiert.');
-    return true;
 }
-}
+
+
+

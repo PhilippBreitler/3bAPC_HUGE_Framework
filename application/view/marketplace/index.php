@@ -2,9 +2,13 @@
     <h1>Marketplace</h1>
     <?php $this->renderFeedbackMessages(); ?>
 
-    <div class="box">
+    <!-- <div class="box">
         <h2>Offene Angebote</h2>
         <a href="<?php echo Config::get('URL'); ?>marketplace/create" class="mp-btn">+ Neues Angebot</a>
+    </div> -->
+
+    <div class="box">
+    <h2><?php echo ($this->active_tab === 'mine') ? 'Meine Angebote' : 'Offene Angebote'; ?></h2>
     </div>
 
     <?php $activeTab = $this->active_tab; ?>
@@ -61,7 +65,7 @@
         <?php if (!empty($this->listings)): ?>
             <div class="marketplace-grid">
                 <?php foreach ($this->listings as $listing): ?>
-                    <div class="marketplace-card">
+                    <div class="marketplace-card" style="position: relative;">
                         <?php if ($listing->first_photo_id): ?>
                             <img src="<?php echo Config::get('URL'); ?>marketplace/photo/<?php echo $listing->first_photo_id; ?>"
                                  alt="<?php echo htmlspecialchars($listing->listing_title); ?>">
@@ -75,8 +79,10 @@
                                 <?php echo htmlspecialchars($listing->category_name); ?> &bull;
                                 <?php echo htmlspecialchars($listing->user_name); ?>
                             </p>
-                            <a href="<?php echo Config::get('URL'); ?>marketplace/view/<?php echo $listing->listing_id; ?>">Details ansehen</a>
                         </div>
+                        <a href="<?php echo Config::get('URL'); ?>marketplace/view/<?php echo $listing->listing_id; ?>"
+                           style="position: absolute; inset: 0;"
+                           aria-label="<?php echo htmlspecialchars($listing->listing_title); ?> ansehen"></a>
                     </div>
                 <?php endforeach; ?>
             </div>

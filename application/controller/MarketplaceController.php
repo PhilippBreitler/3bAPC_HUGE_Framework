@@ -139,16 +139,28 @@ class MarketplaceController extends Controller {
             return;
         }
 
-        if (Request::post('submit') !== null) {
+        if (Request::post('submit') !== null || !empty($_POST['delete_photo_id'])) {
+            // 1. Foto löschen (falls ein Löschen-Button gedrückt wurde)
+            if (!empty($_POST['delete_photo_id'])) {
+                MarketplaceModel::deletePhoto((int)$_POST['delete_photo_id'], Session::get('user_id'));
+            }
+
+            // 2. Textfelder speichern
             $success = MarketplaceModel::updateListing((int)$listing_id, Session::get('user_id'), $_POST);
+
+            // 3. Neue Fotos hochladen (falls vorhanden)
+            if (!empty($_FILES['photos']['name'][0])) {
+                MarketplaceModel::uploadPhotos((int)$listing_id, $_FILES['photos']);
+            }
             if ($success) {
-                Redirect::to('marketplace/view/' . $listing_id);
+            Redirect::to('marketplace/view/' . $listing_id);
             }
         }
 
         $this->View->render('marketplace/edit', [
             'listing'    => $listing,
             'categories' => MarketplaceModel::getCategories(),
+            'photos'     => MarketplaceModel::getListingPhotos((int)$listing_id)
         ]);
     }
 }

@@ -130,6 +130,13 @@ textarea.mp-input {
 .marketplace-card {
     border: 1px solid #ddd;
     background-color: #fff;
+    position: relative; /* falls noch nicht vorhanden */
+}
+
+.marketplace-card a.marketplace-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
 }
 
 .marketplace-card img {

@@ -53,6 +53,9 @@
                         <li>
                             <a href="<?php echo Config::get('URL'); ?>marketplace/index?tab=mine">Meine Angebote</a>
                         </li>
+                        <li>
+                            <a href="<?php echo Config::get('URL'); ?>marketplace/create">Angebot erstellen</a>
+                        </li>
                     </ul>
                 </li>
             <?php } else { ?>

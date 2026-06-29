@@ -9,8 +9,9 @@
     <?php $this->renderFeedbackMessages(); ?>
 
     <form method="post"
-          action="<?php echo Config::get('URL'); ?>marketplace/edit/<?php echo $this->listing->listing_id; ?>"
-          style="margin-top: 20px;">
+        enctype="multipart/form-data"
+        action="<?php echo Config::get('URL'); ?>marketplace/edit/<?php echo $this->listing->listing_id; ?>"
+        style="margin-top: 20px;">
 
         <input type="hidden" name="csrf_token" value="<?= Csrf::makeToken(); ?>" />
 
@@ -49,6 +50,32 @@
                 echo htmlspecialchars($_POST['description'] ?? $this->listing->listing_description);
             ?></textarea>
         </div>
+
+        <!-- NEU: Foto-Verwaltung -->
+        <?php if (!empty($this->photos)): ?>
+        <div class="mp-form-group">
+            <label class="mp-label">Vorhandene Fotos</label>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <?php foreach ($this->photos as $photo): ?>
+                <div style="position:relative;">
+                    <img src="<?= Config::get('URL') ?>marketplace/photo/<?= $photo->photo_id ?>"
+                         style="width:100px; height:100px; object-fit:cover; border-radius:4px;" />
+                    <button type="submit" name="delete_photo_id"
+                            value="<?= $photo->photo_id ?>"
+                            style="position:absolute;top:2px;right:2px;background:red;color:white;border:none;border-radius:3px;cursor:pointer;">✕</button>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <div class="mp-form-group">
+            <label for="photos" class="mp-label">Neue Fotos hinzufügen (max. 3 insgesamt, JPG/PNG/GIF, je 5 MB)</label>
+            <input type="file" id="photos" name="photos[]" multiple accept="image/*" class="mp-input" />
+        </div>
+        <!-- ENDE Foto-Verwaltung -->
+
+
 
         <div class="mp-form-actions">
             <button type="submit" name="submit" value="1" class="mp-btn">Änderungen speichern</button>

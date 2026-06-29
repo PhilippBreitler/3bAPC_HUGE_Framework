@@ -3,13 +3,14 @@
     justify-content: flex-end;
     gap: 8px;
     margin-top: 8px;
+    position: relative;
+    z-index: 2;
 }
 
 
 .mp-inquiry-icon-btn {
     width: 30px;
     height: 30px;
-    /* margin-left: auto; */
     display: inline-flex;
     align-items: center;
     justify-content: center;

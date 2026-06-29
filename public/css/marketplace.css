@@ -45,13 +45,15 @@
     padding: 8px 10px;
     font-family: Arial, sans-serif;
     font-size: 14px;
+    height: 36px;
 }
 
 textarea.mp-input {
+    height: auto;
+    min-height: 150px;
     resize: vertical;
 }
 
-/* Zweispaltige Zeile (z. B. Kategorie + Preis) */
 .mp-row {
     display: flex;
     gap: 20px;
@@ -130,7 +132,7 @@ textarea.mp-input {
 .marketplace-card {
     border: 1px solid #ddd;
     background-color: #fff;
-    position: relative; /* falls noch nicht vorhanden */
+    position: relative;
 }
 
 .marketplace-card a.marketplace-card-link {
@@ -276,17 +278,21 @@ textarea.mp-input {
 .mp-detail-photos {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .mp-detail-photo-row {
     display: flex;
     gap: 8px;
+    flex: 1;        /* neu: füllt die volle Höhe der linken Spalte */
 }
 
 .mp-detail-photo-row img {
     flex: 1;
     min-width: 0;
-    height: 240px;
+    /* height: 240px; */
+    height: 100%;   /* statt fixer 240px */
     object-fit: cover;
     display: block;
     background-color: #f5f5f5;

@@ -36,7 +36,7 @@ class MarketplaceController extends Controller {
             );
 
             if ($listing_id) {
-                Redirect::to('marketplace/index');
+                Redirect::to('marketplace/index?tab=mine');
             }
         }
 

@@ -39,18 +39,10 @@
             </p>
 
             <?php if ($this->listing->user_id !== Session::get('user_id')): ?>
-                <a href="<?php echo Config::get('URL'); ?>marketplace/contactSeller/<?php echo $this->listing->listing_id; ?>" class="mp-btn" style="margin-top: 15px;">
+                <button type="button" style="margin-top: 15px;"
+                    onclick="window.location='<?php echo Config::get('URL'); ?>marketplace/contactSeller/<?php echo $this->listing->listing_id; ?>'">
                     Verkäufer kontaktieren
-                </a>
-            <?php else: ?>
-                <a href="<?php echo Config::get('URL'); ?>marketplace/edit/<?php echo $this->listing->listing_id; ?>" class="mp-btn" style="margin-top: 15px;">
-                    Angebot bearbeiten
-                </a>
-                    <a href="<?php echo Config::get('URL'); ?>marketplace/delete/<?php echo $this->listing->listing_id; ?>"
-                    class="mp-btn" style="margin-top: 8px; display: block; background-color: #454545;"
-                    onclick="return confirm('Verkauf bestätigen? Das Angebot wird entfernt.');">
-                        Verkauft ✓
-                </a>
+                </button>
             <?php endif; ?>
         </div>
 

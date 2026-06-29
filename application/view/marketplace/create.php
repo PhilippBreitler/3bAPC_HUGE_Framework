@@ -1,6 +1,7 @@
 <div class="container">
+    <h1>Marketplace</h1>
     <div class="box">
-        <h1>Neues Angebot erstellen</h1>
+        <h2>Neues Angebot erstellen</h2>
 
         <?php $this->renderFeedbackMessages(); ?>
 
@@ -9,14 +10,14 @@
             <input type="hidden" name="csrf_token" value="<?= Csrf::makeToken(); ?>" />
 
             <div class="mp-form-group">
-                <label for="title" class="mp-label">Titel *</label>
+                <label for="title" class="mp-label">Titel</label>
                 <input type="text" id="title" name="title" maxlength="150" required class="mp-input"
                     value="<?php echo htmlspecialchars($_POST['title'] ?? ''); ?>" />
             </div>
 
             <div class="mp-row">
                 <div class="mp-col">
-                    <label for="category_id" class="mp-label">Kategorie *</label>
+                    <label for="category_id" class="mp-label">Kategorie</label>
                     <select id="category_id" name="category_id" required class="mp-input">
                         <option value="">-- bitte wählen --</option>
                         <?php foreach ($this->categories as $cat): ?>
@@ -29,9 +30,9 @@
                 </div>
 
                 <div class="mp-col">
-                    <label for="price" class="mp-label">Preis (€) *</label>
-                    <input type="number" id="price" name="price" min="0.01" step="0.01" required class="mp-input"/>
-                            value="<?php echo htmlspecialchars($_POST['price'] ?? ''); ?>" />
+                    <label for="price" class="mp-label">Preis (€)</label>
+                    <input type="number" id="price" name="price" min="0.01" step="0.01" required class="mp-input"
+                        value="<?php echo htmlspecialchars($_POST['price'] ?? ''); ?>" />
                 </div>
             </div>
 

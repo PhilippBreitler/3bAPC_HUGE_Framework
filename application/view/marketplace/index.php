@@ -2,11 +2,6 @@
     <h1>Marketplace</h1>
     <?php $this->renderFeedbackMessages(); ?>
 
-    <!-- <div class="box">
-        <h2>Offene Angebote</h2>
-        <a href="<?php echo Config::get('URL'); ?>marketplace/create" class="mp-btn">+ Neues Angebot</a>
-    </div> -->
-
     <div class="box">
     <h2><?php echo ($this->active_tab === 'mine') ? 'Meine Angebote' : 'Offene Angebote'; ?></h2>
     </div>
@@ -49,9 +44,10 @@
         </div>
 
         <div style="display: flex; gap: 8px;">
-            <button type="submit" class="mp-btn">Filtern</button>
+            <button type="submit" style="height: 36px; padding: 8px 10px;">Filtern</button>
             <?php if (!empty($this->filters['category_id']) || ($this->filters['price_min'] ?? '') !== '' || ($this->filters['price_max'] ?? '') !== ''): ?>
-                <a href="<?php echo Config::get('URL'); ?>marketplace/index?tab=all" class="mp-btn-secondary">Zurücksetzen</a>
+                <!-- <a href="<?php echo Config::get('URL'); ?>marketplace/index?tab=all">Zurücksetzen</a> -->
+                <button type="button" style="height: 36px; padding: 8px 10px;" onclick="window.location='<?php echo Config::get('URL'); ?>marketplace/index?tab=all'">Zurücksetzen</button>
             <?php endif; ?>
         </div>
     </form>
@@ -95,7 +91,7 @@
         <?php if (!empty($this->my_listings)): ?>
             <div class="marketplace-grid">
                 <?php foreach ($this->my_listings as $listing): ?>
-                    <div class="marketplace-card">
+                    <div class="marketplace-card" style="position: relative;">
                         <?php if ($listing->first_photo_id): ?>
                             <img src="<?php echo Config::get('URL'); ?>marketplace/photo/<?php echo $listing->first_photo_id; ?>"
                                  alt="<?php echo htmlspecialchars($listing->listing_title); ?>">
@@ -130,6 +126,9 @@
                                     aria-label="Verkauft">$</a>
                             </div>
                         </div>
+                        <a href="<?php echo Config::get('URL'); ?>marketplace/view/<?php echo $listing->listing_id; ?>"
+                           style="position: absolute; inset: 0;"
+                           aria-label="<?php echo htmlspecialchars($listing->listing_title); ?> ansehen"></a>
                     </div>
                 <?php endforeach; ?>
             </div>

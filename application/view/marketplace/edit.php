@@ -71,7 +71,8 @@
 
         <div class="mp-form-group">
             <label for="photos" class="mp-label">Neue Fotos hinzufügen (max. 3 insgesamt, JPG/PNG/GIF, je 5 MB)</label>
-            <input type="file" id="photos" name="photos[]" multiple accept="image/*" class="mp-input" />
+            <input type="file" id="photos" name="photos[]" multiple accept="image/*" class="mp-input" onchange="validatePhotoCount(this)" />
+            <div id="photo-error" style="color:red;display:none;">Maximal 3 Fotos erlaubt.</div>
         </div>
         <!-- ENDE Foto-Verwaltung -->
 
@@ -84,3 +85,20 @@
 
     </form>
 </div>
+
+<script>
+    var existingPhotoCount = <?php echo !empty($this->photos) ? count($this->photos) : 0; ?>;
+
+    function validatePhotoCount(input) {
+        var errorEl = document.getElementById('photo-error');
+        var submitBtn = document.querySelector('button[name="submit"]');
+        if (input.files.length + existingPhotoCount > 3) {
+            errorEl.textContent = 'Maximal 3 Fotos insgesamt erlaubt. Aktuell ' + existingPhotoCount + ' vorhanden, du kannst noch ' + (3 - existingPhotoCount) + ' hinzufügen.';
+            errorEl.style.display = 'block';
+            submitBtn.disabled = true;
+        } else {
+            errorEl.style.display = 'none';
+            submitBtn.disabled = false;
+        }
+    }
+</script>

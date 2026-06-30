@@ -49,10 +49,11 @@
                 <!-- multiple erlaubt mehrere Dateien gleichzeitig auszuwählen -->
                 <input type="file" id="photos" name="photos[]" accept=".jpg,.jpeg,.png,.gif" multiple class="mp-input" onchange="previewPhotos(this)" />
                 <div id="photo-preview" class="mp-photo-preview"></div>
+                <div id="photo-error" style="color:red;display:none;">Maximal 3 Fotos erlaubt.</div>
             </div>
 
             <div class="mp-form-actions">
-                <input type="submit" name="submit" value="Angebot erstellen" />
+                <input type="submit" id="submit-btn" name="submit" value="Angebot erstellen" />
                 <button type="button" onclick="window.location='<?php echo Config::get('URL'); ?>marketplace/index'">Abbrechen</button>
             </div>
         </form>
@@ -62,7 +63,18 @@
 <script>
     function previewPhotos(input) {
         var preview = document.getElementById('photo-preview');
+        var errorEl = document.getElementById('photo-error');
+        var submitBtn = document.getElementById('submit-btn');
         preview.innerHTML = '';
+
+        if (input.files.length > 3) {
+            errorEl.style.display = 'block';
+            submitBtn.disabled = true;
+            return;
+        }
+        errorEl.style.display = 'none';
+        submitBtn.disabled = false;
+
         Array.prototype.slice.call(input.files, 0, 3).forEach(function(file) {
             if (!file.type.match('image.*')) return;
             var reader = new FileReader();

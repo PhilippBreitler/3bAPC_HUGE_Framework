@@ -52,8 +52,8 @@
             </div>
 
             <div class="mp-form-actions">
-                <button type="submit" name="submit" value="1" class="mp-btn">Angebot erstellen</button>
-                <a href="<?php echo Config::get('URL'); ?>marketplace/index" class="mp-btn-secondary">Abbrechen</a>
+                <input type="submit" name="submit" value="Angebot erstellen" />
+                <button type="button" onclick="window.location='<?php echo Config::get('URL'); ?>marketplace/index'">Abbrechen</button>
             </div>
         </form>
     </div>

@@ -154,4 +154,9 @@ return array(
     'EMAIL_VERIFICATION_FROM_NAME' => 'My Project',
     'EMAIL_VERIFICATION_SUBJECT' => 'Account activation for PROJECT XY',
     'EMAIL_VERIFICATION_CONTENT' => 'Please click on this link to activate your account: ',
-);
+    /**
+     * Configuration for: Google reCAPTCHA v2
+     * Keys are loaded from secrets.php (not committed to Git).
+     * See secrets.example.php for the required format.
+     */
+) + (require __DIR__ . '/secrets.php');

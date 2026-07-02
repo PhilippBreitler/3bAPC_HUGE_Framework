@@ -6,3 +6,6 @@
 
 # don't commit uploaded user images
 /userpictures/
+
+# don't commit config files with real credentials (DB passwords, API keys, etc.)
+/application/config/secrets.php

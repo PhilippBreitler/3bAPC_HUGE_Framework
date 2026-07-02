@@ -22,6 +22,12 @@ class RegistrationModel
         $user_password_new = Request::post('user_password_new');
         $user_password_repeat = Request::post('user_password_repeat');
 
+        // verify Google reCAPTCHA before anything else
+        if (!self::verifyRecaptcha()) {
+            Session::add('feedback_negative', 'Bitte bestätige, dass du kein Roboter bist (reCAPTCHA).');
+            return false;
+        }
+
         // stop registration flow if registrationInputValidation() returns false (= anything breaks the input check rules)
         # Captcha Übergabe entfernt
         $validation_result = self::registrationInputValidation($user_name, $user_password_new, $user_password_repeat, $user_email, $user_email_repeat);
@@ -178,8 +184,44 @@ class RegistrationModel
         return true;
     }
 
-    /**
-     * Writes the new user's data to the database
+    /**     * Verifies the Google reCAPTCHA v2 response token with Google's API
+     *
+     * @return bool
+     */
+    public static function verifyRecaptcha()
+    {
+        $recaptcha_response = Request::post('g-recaptcha-response');
+
+        if (empty($recaptcha_response)) {
+            return false;
+        }
+
+        $secret_key = Config::get('RECAPTCHA_SECRET_KEY');
+
+        $context = stream_context_create(array(
+            'http' => array(
+                'method'  => 'POST',
+                'header'  => 'Content-Type: application/x-www-form-urlencoded',
+                'content' => http_build_query(array(
+                    'secret'   => $secret_key,
+                    'response' => $recaptcha_response,
+                    'remoteip' => $_SERVER['REMOTE_ADDR']
+                ))
+            )
+        ));
+
+        $result = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
+
+        if ($result === false) {
+            return false;
+        }
+
+        $result_json = json_decode($result, true);
+
+        return isset($result_json['success']) && $result_json['success'] === true;
+    }
+
+    /**     * Writes the new user's data to the database
      *
      * @param $user_name
      * @param $user_password_hash
